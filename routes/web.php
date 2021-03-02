@@ -59,6 +59,16 @@ Route::get('/logout', function () {
 
 // -------------- POSTS ----------------------
 
+function checkIfGranted(int $userId): bool
+{
+    if (Auth::user()->getAuthIdentifier() === $userId)
+    {
+        return true;
+    }else{
+        return false;
+    }
+}
+
 Route::get('/post/new', function (){
     return view('posts.post_new');
 })->name('newPost')->middleware('auth');
@@ -66,12 +76,33 @@ Route::get('/post/new', function (){
 Route::post('/post/new', [PostController::class, 'addPost']);
 
 Route::get('/post/edit/{post}', function (Post $post){
-    return view('posts.post_edit', [
-        'post'=>$post
-    ]);
+
+    if (checkIfGranted($post->user->id))
+    {
+        return view('posts.post_edit', [
+            'post'=>$post
+        ]);
+    }else{
+        return redirect()->home()->with('error', 'Cannot do this');
+    }
+
+
 })->name('editPost')->middleware('auth');
 
 Route::post('/post/edit/{post}', [PostController::class, 'editPost'])->middleware('auth');
+
+Route::get('/post/delete{post}', function (Post $post){
+
+    if (checkIfGranted($post->user->id))
+    {
+        $post->delete();
+        return redirect()->home()->with('success', 'Post was deleted from database');
+    }else{
+        return redirect()->home()->with('error', 'Cannot do this');
+    }
+
+
+})->name('deletePost')->middleware('auth');
 
 
 // -------------- POSTS ----------------------

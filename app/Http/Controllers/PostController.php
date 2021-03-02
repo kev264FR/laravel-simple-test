@@ -28,7 +28,7 @@ class PostController extends Controller
 
     public function editPost(Request $request, Post $post): RedirectResponse
     {
-        if (Auth::user() === $post->user())
+        if (Auth::user()->getAuthIdentifier() === $post->user->id)
         {
             $request->validate([
                 'title'=>'required|max:20',

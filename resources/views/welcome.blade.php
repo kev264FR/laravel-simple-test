@@ -16,6 +16,7 @@
                 @auth()
                     @if(\Illuminate\Support\Facades\Auth::user() == $post->user)
                         <a href="{{route('editPost', ['post'=>$post->id])}}" class="btn btn-warning">Edit</a>
+                        <a href="{{route('deletePost', ['post'=>$post->id])}}" class="btn btn-danger">Delete</a>
                     @endif
                 @endauth
             </div>
